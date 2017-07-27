@@ -19,7 +19,7 @@ NAME=jmeter
 JMETER_PATH=/usr/share/jmeter
 # RMI_HOST_DEF is used inside the $JMETER_PATH/bin/$NAME-server script
 # Change this to your IP
-export RMI_HOST_DEF="-Djava.rmi.server.hostname=<%= @server_ip %>"
+export RMI_HOST_DEF="-Djava.rmi.server.hostname=<%= @bind_ip %>"
 SERVER_PORT=1099
 SERVER_CMD="$JMETER_PATH/bin/$NAME-server"
 PIDFILE=/var/run/$NAME.pid

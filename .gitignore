@@ -55,3 +55,6 @@ spec/fixtures/modules/
 .vagrant/
 .bundle/
 coverage/
+log/
+.yardoc/
+doc/

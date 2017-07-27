@@ -17,7 +17,7 @@ DESC="Apache JMeter Remote Server"
 NAME=jmeter
 JMETER_PATH=/usr/share/jmeter
 # Change this to your IP
-JMETER_IP=<%= @server_ip %>
+JMETER_IP=<%= @bind_ip %>
 JMETER_PORT=1099
 DAEMON="$JMETER_PATH/bin/$NAME"
 DAEMON_ARGS="-Djava.rmi.server.hostname=$JMETER_IP -Dserver_port=$JMETER_PORT -s -j $JMETER_PATH/bin/jmeter-server.log"

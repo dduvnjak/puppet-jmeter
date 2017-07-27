@@ -4,12 +4,13 @@
 [![Puppet Forge](https://img.shields.io/puppetforge/v/dduvnjak/jmeter.svg)](https://forge.puppet.com/dduvnjak/jmeter)
 [![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/dduvnjak/jmeter.svg)](https://forge.puppetlabs.com/dduvnjak/jmeter)
 
-This class installs the latest stable version of JMeter (currently v2.13) from apache.org. If you use the `::server` class, an init-file will be added to `/etc/init.d` and JMeter will be started in server mode listening on the default port.
+This class installs the latest version of JMeter (currently v3.2) from apache.org. If you use the `::server` class, an init script will be installed, the service enabled, and JMeter will be started in server mode listening on the default port.
 
-Both the `jmeter` and `jmeter::server` can optionally install the `jmeter-plugins` package which adds a lot of useful listeners, thread groups, etc.
+Both the `jmeter` and `jmeter::server` can optionally install the plugin manager, which allows you to install additional plugins.
 
 The init script is based on the one available at https://gist.github.com/2830209.
 
+Note: If you are using 3.x (the default version), you will need to have at least Java 8 installed.
 
 Basic usage
 -----------
@@ -18,25 +19,34 @@ Install JMeter:
 
     class { 'jmeter': }
 
-Install JMeter v2.13 including 'Standard' and 'Extras' set of [JMeterPlugins](http://jmeter-plugins.org/) v1.2.1
+Install JMeter v3.x, plugin manager ([JMeterPlugins](http://jmeter-plugins.org/), and enable the most recent version of plugins 'foo' and 'bar'. 
 
     class { 'jmeter':
-      jmeter_version            => '2.13',
-      jmeter_plugins_install    => true,
-      jmeter_plugins_version    => '1.2.1',
-      jmeter_plugins_set        => ['Standard', 'Extras']
+      jmeter_version         => '3.2',
+      plugin_manager_install => true,
+      plugins                => {
+        'foo' => { ensure => present },
+        'bar' => { ensure => present },
+      }
     }
 
 Install JMeter server using the default host-only IP address 0.0.0.0:
 
-    class { 'jmeter::server': }
+    class { 'jmeter':
+      enable_server => true,
+    }
 
 Install JMeter server using a custom host-only IP address:
 
-    class { 'jmeter::server':
-      server_ip => '33.33.33.42',
+    class { 'jmeter':
+      enable_server => true,
+      bind_ip       => '10.33.33.42',
     }
 
+Install a plugin (if not using the jmeter::plugins example above):
+    jmeter_plugin { 'foo':
+      ensure => present,
+    }
 
 Authors
 -------
@@ -46,3 +56,6 @@ Morten Wulff
 
 Dario Duvnjak  
 http://dtk.io/
+
+William Yardley  
+https://github.com/wyardley
