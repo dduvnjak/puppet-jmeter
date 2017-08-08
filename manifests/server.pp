@@ -1,16 +1,12 @@
-# == Class: jmeter::server
+# jmeter::server
 #
-# This class configures the server component of JMeter.
+# @summary This class configures the server component of JMeter. Private class.
 #
-# === Examples
-#
-#   class { 'jmeter::server': }
-#
-class jmeter::server (
-  $server_ip = '0.0.0.0'
-) inherits ::jmeter::params {
+class jmeter::server {
 
-  include jmeter
+  assert_private()
+
+  $bind_ip = $::jmeter::bind_ip
 
   $init_template = $::jmeter::params::init_template
 
@@ -19,6 +15,7 @@ class jmeter::server (
     owner   => root,
     group   => root,
     mode    => '0755',
+    notify  => Service['jmeter'],
   }
 
   if $::osfamily == 'debian' {
@@ -29,18 +26,10 @@ class jmeter::server (
     }
   }
 
-  if $jmeter::jmeter_plugins_install == true {
-    $jmeter_subscribe = [File['/etc/init.d/jmeter'], Jmeter::Plugins_install[$jmeter::jmeter_plugins_set]]
-  }
-  else {
-    $jmeter_subscribe = [File['/etc/init.d/jmeter']]
-  }
-
   service { 'jmeter':
-    ensure    => running,
-    enable    => true,
-    require   => File['/etc/init.d/jmeter'],
-    provider  => $jmeter::params::service_provider,
-    subscribe => $jmeter_subscribe,
+    ensure   => running,
+    enable   => true,
+    require  => File['/etc/init.d/jmeter'],
+    provider => $jmeter::params::service_provider,
   }
 }

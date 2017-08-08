@@ -1,5 +1,6 @@
 fixtures:
-  repositories:
-    stdlib: git://github.com/puppetlabs/puppetlabs-stdlib.git
+  forge_modules:
+    stdlib: 'puppetlabs/stdlib'
+    archive: 'puppet-archive'
   symlinks:
     jmeter: "#{source_dir}"
