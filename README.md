@@ -48,14 +48,4 @@ Install a plugin (if not using the jmeter::plugins example above):
       ensure => present,
     }
 
-Authors
--------
 
-Morten Wulff  
-<wulff@ratatosk.net>
-
-Dario Duvnjak  
-http://dtk.io/
-
-William Yardley  
-https://github.com/wyardley
