@@ -43,7 +43,8 @@ Install JMeter server using a custom host-only IP address:
       bind_ip       => '10.33.33.42',
     }
 
-Install a plugin (if not using the jmeter::plugins example above):
+Install a plugin (if not using the `jmeter::plugins` example above):
+
     jmeter_plugin { 'foo':
       ensure => present,
     }
