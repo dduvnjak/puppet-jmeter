@@ -5,7 +5,7 @@ describe Puppet::Type.type(:jmeter_plugin) do
   end
   it 'should accept a plugin name' do
     @plugin[:name] = 'plugin-name'
-    @plugin[:name].should == 'plugin-name'
+    expect(@plugin[:name]).to eq('plugin-name')
   end
   it 'should require a name' do
     expect {
