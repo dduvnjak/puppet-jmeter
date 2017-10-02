@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'puppetlabs_spec_helper', :groups => [:test]
+gem 'rspec-puppet-facts', :groups => [:test]
 
 if facterversion = ENV['FACTER_GEM_VERSION']
     gem 'facter', facterversion.to_s, :require => false, :groups => [:test]
@@ -38,8 +39,7 @@ group :system_tests do
   gem 'beaker', *location_for(ENV['BEAKER_VERSION'])                             if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0') and ! supports_windows
   gem 'beaker', *location_for(ENV['BEAKER_VERSION'] || '< 3')                    if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.3.0') and ! supports_windows
   gem 'beaker-pe',                                                               :require => false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0')
-  gem 'beaker-rspec', *location_for(ENV['BEAKER_RSPEC_VERSION'] || '>= 3.4')     if ! supports_windows
-  gem 'beaker-rspec', *location_for(ENV['BEAKER_RSPEC_VERSION'] || '~> 5.1')     if supports_windows
+  gem 'beaker-rspec',                                                            :require => false
   gem 'beaker-puppet_install_helper',                                            :require => false
   gem 'master_manipulator',                                                      :require => false
   gem 'beaker-hostgenerator', *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'])
