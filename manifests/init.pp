@@ -39,22 +39,22 @@
 # @param plugin_manager_version Sets the version of the plugin manager to install.
 # @param plugins [Optional[Hash]] An optional hash of plugins to install via the plugin manager.
 class jmeter (
-  Boolean $enable_server                                         = false,
-  Stdlib::Compat::Ip_address $bind_ip                            = '0.0.0.0',
-  String $jmeter_version                                         = '3.2',
-  String $jmeter_checksum                                        = '0a4aa15b39bd18e966948cde559dc82360326125',
-  String $checksum_type                                          = 'sha1',
-  Boolean $plugin_manager_install                                = false,
-  String $plugin_manager_version                                 = '0.13',
-  String $cmdrunner_version                                      = '2.0',
-  String $cmdrunner_checksum                                     = '06ecaa09961e3d7bab009fed4fd6d34db81fa830',
-  Optional[Hash] $plugins                                        = undef,
-  Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl] $download_url       = 'http://archive.apache.org/dist/jmeter/binaries/',
-  Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl] $plugin_manager_url = 'http://search.maven.org/remotecontent?filepath=kg/apc/',
-  String $plugin_manager_checksum                                = 'e80c003adb58cf152f861fdce398e0e76c3593da',
-  String $java_version                                           = $jmeter::params::java_version,
-  Boolean $manage_java                                           = true,
-  String $jdk_pkg                                                = $jmeter::params::jdk_pkg
+  Boolean $enable_server              = false,
+  Stdlib::Compat::Ip_address $bind_ip = '0.0.0.0',
+  String $jmeter_version              = '3.2',
+  String $jmeter_checksum             = '0a4aa15b39bd18e966948cde559dc82360326125',
+  String $checksum_type               = 'sha1',
+  Boolean $plugin_manager_install     = false,
+  String $plugin_manager_version      = '0.13',
+  String $cmdrunner_version           = '2.0',
+  String $cmdrunner_checksum          = '06ecaa09961e3d7bab009fed4fd6d34db81fa830',
+  Optional[Hash] $plugins             = undef,
+  Stdlib::HTTPUrl $download_url       = 'http://archive.apache.org/dist/jmeter/binaries/',
+  Stdlib::HTTPUrl $plugin_manager_url = 'http://search.maven.org/remotecontent?filepath=kg/apc/',
+  String $plugin_manager_checksum     = 'e80c003adb58cf152f861fdce398e0e76c3593da',
+  String $java_version                = $jmeter::params::java_version,
+  Boolean $manage_java                = true,
+  String $jdk_pkg                     = $jmeter::params::jdk_pkg
 ) inherits jmeter::params {
 
   Exec { path => '/bin:/usr/bin:/usr/sbin' }
