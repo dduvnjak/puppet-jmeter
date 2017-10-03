@@ -1,12 +1,8 @@
 require 'spec_helper'
 
 describe 'jmeter' do
-
-  before(:all) do
-    @jmeter_version = '3.2'
-    @plugin_manager_version = '0.13'
-    @cmdrunner_version = '2.0'
-  end
+  let(:plugin_manager_version) { '0.16' }
+  let(:cmdrunner_version) { '2.0' }
 
   context 'on unsupported distributions' do
     let(:facts) do
@@ -24,6 +20,25 @@ describe 'jmeter' do
     context "on #{os}" do
       let(:facts) { facts }
 
+      case facts[:os]['family']
+      when 'RedHat'
+        if facts[:os]['release']['major'].to_i >= 7
+          jmeter_version = '3.3'
+          java_package   = 'java-1.8.0-openjdk'
+        else
+          jmeter_version = '2.9'
+          java_package   = 'java-1.7.0-openjdk'
+        end
+      when 'Debian'
+        if facts[:os]['name'] == 'Ubuntu' and facts[:os]['release']['full'] == '16.04'
+          jmeter_version = '3.3'
+          java_package   = 'openjdk-8-jre-headless'
+        else
+          jmeter_version = '2.9'
+          java_package   = 'openjdk-7-jre-headless'
+        end
+      end
+
       has_systemd = (
         (facts[:os]['family'] == 'RedHat' && facts[:os]['release']['major'].to_i >= 7) ||
         (facts[:os]['family'] == 'Debian' && facts[:os]['release']['full'] == '16.04')
@@ -34,13 +49,14 @@ describe 'jmeter' do
         it { is_expected.to contain_class('jmeter') }
         it { is_expected.to contain_class('jmeter::install') }
         it { is_expected.not_to contain_class('jmeter::server') }
+        it { is_expected.not_to contain_class('jmeter::service') }
       end
     
       # This is a private class, so easiest to test directly in the class spec.
       context "jmeter::install" do
         it do
-          is_expected.to contain_archive("/tmp/apache-jmeter-#{@jmeter_version}.tgz").with(
-            'source' => "http://archive.apache.org/dist/jmeter/binaries/apache-jmeter-#{@jmeter_version}.tgz"
+          is_expected.to contain_archive("/tmp/apache-jmeter-#{jmeter_version}.tgz").with(
+            'source' => "http://archive.apache.org/dist/jmeter/binaries/apache-jmeter-#{jmeter_version}.tgz"
           )
         end
         it do
@@ -48,20 +64,8 @@ describe 'jmeter' do
             ensure: 'link'   
           )
         end
-				if facts[:os]['family'] == 'Debian'
-					if facts[:os]['release']['major'] == '16.04'
-        		it { is_expected.to contain_package('openjdk-8-jre-headless') }
-					else
-        		it { is_expected.to contain_package('openjdk-7-jre-headless') }
-					end
-				end
-				if facts[:os]['family'] == 'RedHat'
-					if facts[:os]['release']['major'] == '7'
-        		it { is_expected.to contain_package('java-1.8.0-openjdk') }
-					else
-        		it { is_expected.to contain_package('java-1.7.0-openjdk') }
-					end
-				end
+
+        it { is_expected.to contain_package(java_package) }
     
         context "With plugin_manager_install set" do
           let(:params) { { plugin_manager_install: true } }
@@ -112,12 +116,68 @@ describe 'jmeter' do
           let(:params) { { enable_server: true } }
     
           it { is_expected.to contain_class('jmeter::server') }
+          it { is_expected.to contain_class('jmeter::service') }
           it do
             is_expected.to contain_service('jmeter').with(
               { 'ensure' => 'running', 'enable' => 'true' }
             )
           end
         end
+
+        context 'on systems with systemd', if: has_systemd do
+          let(:params) { { enable_server: true } }
+
+          it { is_expected.to contain_file('/etc/systemd/system/jmeter.service') }
+          it { is_expected.not_to contain_file('/etc/init.d/jmeter') }
+
+          context 'with explicit bind_ip' do
+            let(:params) { { enable_server: true, bind_ip: '10.5.32.9' } }
+
+            it do
+              is_expected.to contain_file('/etc/systemd/system/jmeter.service').with_content(
+                %r{\s-Djava.rmi.server.hostname=10\.5\.32\.9\s}
+              )
+            end
+          end
+
+          context 'with explicit bind_port' do
+            let(:params) { { enable_server: true, bind_port: 8832 } }
+
+            it do
+              is_expected.to contain_file('/etc/systemd/system/jmeter.service').with_content(
+                %r{\s-Dserver_port=8832\s}
+              )
+            end
+          end
+        end
+
+        context 'on systems without systemd', if: !has_systemd do
+          let(:params) { { enable_server: true } }
+
+          it { is_expected.to contain_file('/etc/init.d/jmeter') }
+          it { is_expected.not_to contain_file('/etc/systemd/system/jmeter.service') }
+
+          context 'with explicit bind_ip' do
+            let(:params) { { enable_server: true, bind_ip: '10.5.32.9' } }
+
+            it do
+              is_expected.to contain_file('/etc/init.d/jmeter').with_content(
+                %r{\s-Djava.rmi.server.hostname=10\.5\.32\.9\s}
+              )
+            end
+          end
+
+          context 'with explicit bind_port' do
+            let(:params) { { enable_server: true, bind_port: 8832 } }
+
+            it do
+              is_expected.to contain_file('/etc/init.d/jmeter').with_content(
+                %r{\s-Dserver_port=8832\s}
+              )
+            end
+          end
+        end
+
       end
     end
 	end

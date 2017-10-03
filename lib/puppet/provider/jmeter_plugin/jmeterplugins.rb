@@ -8,24 +8,16 @@ DESC
 
   def self.get_plugins
 
-    plugins = Hash.new
+    plugins = {}
 
-    jmeterplugins('status').split(/\n/).map do |line|
-
-      if line =~ /\[.*\]/
-        line = line.strip()
-        line = line.tr('[]', '')
-        chunks = line.split(', ')
-        chunks.each do |chunk|
-          name, version = chunk.split('=')
-          plugins[name] = version
-        end
-      elsif line =~ /^ERROR StatusLogger/
-        # Harmless
-        next
-      else
-        raise Puppet::Error, "Cannot parse invalid plugins line: #{line}"
-      end
+    lines = jmeterplugins('status').split(%r{\n})
+    raise Puppet::Error, 'Cannot get plugin status' unless lines.last =~ %r{\[.*\]}
+    line = lines.last.strip
+    line = line.tr('[]', '')
+    chunks = line.split(', ')
+    chunks.each do |chunk|
+      name, version = chunk.split('=')
+      plugins[name] = version
     end
     plugins
   end

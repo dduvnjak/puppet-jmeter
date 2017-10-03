@@ -1,7 +1,20 @@
 require 'spec_helper_acceptance'
-require 'specinfra'
 
-describe 'jmeter class:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
+describe 'jmeter class:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('os.family')) do
+  case fact('os.family')
+  when 'RedHat'
+    if fact('os.release.major').to_i >= 7
+      jmeter_version = '3.3'
+    else
+      jmeter_version = '2.9'
+    end
+  when 'Debian'
+    if fact('os.name') == 'Ubuntu' and fact('os.release.full') == '16.04'
+      jmeter_version = '3.3'
+    else
+      jmeter_version = '2.9'
+    end
+  end
 
   context 'base class' do
     it 'applies successfully' do
@@ -18,7 +31,7 @@ describe 'jmeter class:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfami
       end
     end
 
-    describe file('/usr/share/apache-jmeter-3.2/lib') do
+    describe file("/usr/share/apache-jmeter-#{jmeter_version}/lib") do
       it { is_expected.to be_directory }
     end
     describe file('/usr/share/jmeter') do
@@ -48,10 +61,10 @@ class { 'jmeter':
       end
     end
 
-    describe file('/usr/share/apache-jmeter-3.2/lib/ext/jmeter-plugins-manager-0.13.jar') do
+    describe file("/usr/share/apache-jmeter-#{jmeter_version}/lib/ext/jmeter-plugins-manager-0.16.jar") do
       it { is_expected.to be_file }
     end
-    describe file('/usr/share/apache-jmeter-3.2/lib/cmdrunner-2.0.jar') do
+    describe file("/usr/share/apache-jmeter-#{jmeter_version}/lib/cmdrunner-2.0.jar") do
       it { is_expected.to be_file }
     end
     describe command('/usr/share/jmeter/bin/PluginsManagerCMD.sh status') do
@@ -73,7 +86,9 @@ class { 'jmeter':
       it { is_expected.to be_enabled }
       it { is_expected.to be_running }
     end
+
     describe port(1099) do
+      # This seems to fail, even with a sleep before it
       xit { is_expected.to be_listening }
     end
   end

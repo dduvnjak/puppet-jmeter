@@ -15,12 +15,10 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Apache JMeter Remote Server"
 NAME=jmeter
+JMETER_USER=<%= @jmeter_user %>
 JMETER_PATH=/usr/share/jmeter
-# Change this to your IP
-JMETER_IP=<%= @bind_ip %>
-JMETER_PORT=1099
-DAEMON="$JMETER_PATH/bin/$NAME"
-DAEMON_ARGS="-Djava.rmi.server.hostname=$JMETER_IP -Dserver_port=$JMETER_PORT -s -j $JMETER_PATH/bin/jmeter-server.log"
+DAEMON="$JMETER_PATH/bin/$NAME.sh"
+DAEMON_ARGS="-s -Djava.rmi.server.hostname=<%= @bind_ip %> -Dserver_port=<%= @bind_port %> -j /var/log/jmeter/jmeter-server.log"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -46,9 +44,9 @@ do_start()
         #   0 if daemon has been started
         #   1 if daemon was already running
         #   2 if daemon could not be started
-        start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
+        start-stop-daemon --start --chuid $JMETER_USER --quiet --background --make-pidfile --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
                 || return 1
-        start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- \
+        start-stop-daemon --start --chuid $JMETER_USER --quiet --background --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- \
                 $DAEMON_ARGS \
                 || return 2
         # Add code here, if necessary, that waits for the process to be ready

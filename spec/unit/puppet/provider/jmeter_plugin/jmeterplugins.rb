@@ -17,10 +17,26 @@ describe provider_class do
 
   it 'should return instances' do
     provider_class.expects(:jmeterplugins).with('status').returns <<-EOT
-[foo=3.0]
+INFO    2017-10-11 20:07:17.864 [org.jmet] (): Command is: status
+WARN    2017-10-11 20:07:17.963 [org.jmet] (): Found JAR conflict: /usr/share/apache-jmeter-2.9/lib/commons-jexl-2.1.1.jar and /usr/share/apache-jmeter-2.9/lib/commons-jexl-1.1.jar
+[foo=3.0, jmeter-ftp=2.9]
 EOT
     instances = provider_class.instances
-    expect(instances.size).to eq(1)
+    expect(instances.size).to eq(2)
+  end
+
+  it 'errors if the expected output is not found' do
+    provider_class.expects(:jmeterplugins).with('status').returns <<-EOT
+ERROR: java.lang.IllegalArgumentException: Command parameter is missing
+*** Problem's technical details go below ***
+Home directory was detected as: /usr/share/apache-jmeter-2.9/lib
+Exception in thread "main" java.lang.IllegalArgumentException: Command parameter is missing
+	at org.jmeterplugins.repository.PluginManagerCMD.processParams(PluginManagerCMD.java:52)
+	at kg.apc.cmdtools.PluginsCMD.processParams(PluginsCMD.java:66)
+EOT
+    expect do
+      provider_class.instances
+    end.to raise_error(Puppet::Error, %r{Cannot get plugin status})
   end
 
   it 'should call jmeterplugins to create' do
