@@ -71,22 +71,22 @@ describe 'jmeter' do
           let(:params) { { plugin_manager_install: true } }
 
           it do
-            is_expected.to contain_archive("/usr/share/jmeter/lib/ext/jmeter-plugins-manager-#{@plugin_manager_version}.jar").with(
-              'source' => "http://search.maven.org/remotecontent?filepath=kg/apc/jmeter-plugins-manager/#{@plugin_manager_version}/jmeter-plugins-manager-#{@plugin_manager_version}.jar",
-              'creates' => "/usr/share/jmeter/lib/ext/jmeter-plugins-manager-#{@plugin_manager_version}.jar",
+            is_expected.to contain_archive("/usr/share/jmeter/lib/ext/jmeter-plugins-manager-#{plugin_manager_version}.jar").with(
+              'source' => "http://search.maven.org/remotecontent?filepath=kg/apc/jmeter-plugins-manager/#{plugin_manager_version}/jmeter-plugins-manager-#{plugin_manager_version}.jar",
+              'creates' => "/usr/share/jmeter/lib/ext/jmeter-plugins-manager-#{plugin_manager_version}.jar",
               'cleanup' => :false
             )
           end
           it do
-            is_expected.to contain_archive("/usr/share/jmeter/lib/cmdrunner-#{@cmdrunner_version}.jar").with(
-              'source'  => "http://search.maven.org/remotecontent?filepath=kg/apc/cmdrunner/#{@cmdrunner_version}/cmdrunner-#{@cmdrunner_version}.jar",
-              'creates' => "/usr/share/jmeter/lib/cmdrunner-#{@cmdrunner_version}.jar",
+            is_expected.to contain_archive("/usr/share/jmeter/lib/cmdrunner-#{cmdrunner_version}.jar").with(
+              'source'  => "http://search.maven.org/remotecontent?filepath=kg/apc/cmdrunner/#{cmdrunner_version}/cmdrunner-#{cmdrunner_version}.jar",
+              'creates' => "/usr/share/jmeter/lib/cmdrunner-#{cmdrunner_version}.jar",
               'cleanup' => :false
             )
           end
           it do
             is_expected.to contain_exec('install_cmdrunner').with(
-              'command' => "java -cp /usr/share/jmeter/lib/ext/jmeter-plugins-manager-#{@plugin_manager_version}.jar org.jmeterplugins.repository.PluginManagerCMDInstaller",
+              'command' => "java -cp /usr/share/jmeter/lib/ext/jmeter-plugins-manager-#{plugin_manager_version}.jar org.jmeterplugins.repository.PluginManagerCMDInstaller",
               'creates' => '/usr/share/jmeter/bin/PluginsManagerCMD.sh'
             )
           end

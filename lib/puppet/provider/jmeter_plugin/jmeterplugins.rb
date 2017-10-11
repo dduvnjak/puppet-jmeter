@@ -6,7 +6,7 @@ DESC
 
   has_command(:jmeterplugins, '/usr/share/jmeter/bin/PluginsManagerCMD.sh')
 
-  def self.get_plugins
+  def self.plugins
     plugins = {}
 
     lines = jmeterplugins('status').split(%r{\n})
@@ -23,7 +23,7 @@ DESC
 
   def self.instances
     resources = []
-    get_plugins.map do |name, _versions|
+    plugins.map do |name, _versions|
       plugin = {
         ensure: :present,
         name: name
@@ -36,7 +36,7 @@ DESC
   def self.prefetch(resources)
     plugins = instances
     resources.keys.each do |name|
-      if provider = plugins.find { |plugin| plugin.name == name }
+      if (provider = plugins.find { |plugin| plugin.name == name })
         resources[name].provider = provider
       end
     end

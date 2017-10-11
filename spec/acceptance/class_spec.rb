@@ -18,17 +18,11 @@ describe 'jmeter class:', unless: UNSUPPORTED_PLATFORMS.include?(fact('os.family
 
   context 'base class' do
     it 'applies successfully' do
-      pp = "class { '::jmeter': }"
+      pp = "class { 'jmeter': }"
 
       # Apply twice to ensure no errors the second time.
-      apply_manifest(pp, catch_failures: true) do |r|
-        expect(r.stderr).not_to match(%r{error}i)
-      end
-      apply_manifest(pp, catch_failures: true) do |r|
-        expect(r.stderr).not_to eq(%r{error}i)
-
-        expect(r.exit_code).to be_zero
-      end
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("/usr/share/apache-jmeter-#{jmeter_version}/lib") do
@@ -50,14 +44,8 @@ class { 'jmeter':
 }
       EOS
       # Apply twice to ensure no errors the second time.
-      apply_manifest(pp, catch_failures: true) do |r|
-        expect(r.stderr).not_to match(%r{error}i)
-      end
-      apply_manifest(pp, catch_failures: true) do |r|
-        expect(r.stderr).not_to eq(%r{error}i)
-
-        expect(r.exit_code).to be_zero
-      end
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("/usr/share/apache-jmeter-#{jmeter_version}/lib/ext/jmeter-plugins-manager-0.16.jar") do
@@ -79,6 +67,7 @@ class { 'jmeter':
 }
       EOS
       apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
     describe service('jmeter') do
       it { is_expected.to be_enabled }

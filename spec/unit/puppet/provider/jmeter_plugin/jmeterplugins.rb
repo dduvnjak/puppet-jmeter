@@ -8,11 +8,11 @@ end
 provider_class = Puppet::Type.type(:jmeter_plugin).provider(:jmeterplugins)
 
 describe provider_class do
-  before do
-    @resource = Puppet::Type::Jmeter_plugin.new(
-      name: 'foo'
-    )
-    @provider = provider_class.new(@resource)
+  let(:resource) do
+    Puppet::Type::Jmeter_plugin.new(name: 'foo')
+  end
+  let(:provider) do
+    provider_class.new(resource)
   end
 
   it 'returns instances' do
@@ -40,11 +40,11 @@ EOT
   end
 
   it 'calls jmeterplugins to create' do
-    @provider.expects(:jmeterplugins).with('install', 'foo')
-    @provider.create
+    provider.expects(:jmeterplugins).with('install', 'foo')
+    provider.create
   end
   it 'calls jmeterplugins to destroy' do
-    @provider.expects(:jmeterplugins).with('uninstall', 'foo')
-    @provider.destroy
+    provider.expects(:jmeterplugins).with('uninstall', 'foo')
+    provider.destroy
   end
 end
