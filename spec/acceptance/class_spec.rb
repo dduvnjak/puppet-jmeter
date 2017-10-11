@@ -1,19 +1,19 @@
 require 'spec_helper_acceptance'
 
-describe 'jmeter class:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('os.family')) do
+describe 'jmeter class:', unless: UNSUPPORTED_PLATFORMS.include?(fact('os.family')) do
   case fact('os.family')
   when 'RedHat'
-    if fact('os.release.major').to_i >= 7
-      jmeter_version = '3.3'
-    else
-      jmeter_version = '2.9'
-    end
+    jmeter_version = if fact('os.release.major').to_i >= 7
+                       '3.3'
+                     else
+                       '2.9'
+                     end
   when 'Debian'
-    if fact('os.name') == 'Ubuntu' and fact('os.release.full') == '16.04'
-      jmeter_version = '3.3'
-    else
-      jmeter_version = '2.9'
-    end
+    jmeter_version = if fact('os.name') == 'Ubuntu' && fact('os.release.full') == '16.04'
+                       '3.3'
+                     else
+                       '2.9'
+                     end
   end
 
   context 'base class' do
@@ -21,11 +21,11 @@ describe 'jmeter class:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('os.fam
       pp = "class { '::jmeter': }"
 
       # Apply twice to ensure no errors the second time.
-      apply_manifest(pp, :catch_failures => true) do |r|
-        expect(r.stderr).not_to match(/error/i)
+      apply_manifest(pp, catch_failures: true) do |r|
+        expect(r.stderr).not_to match(%r{error}i)
       end
-      apply_manifest(pp, :catch_failures => true) do |r|
-        expect(r.stderr).not_to eq(/error/i)
+      apply_manifest(pp, catch_failures: true) do |r|
+        expect(r.stderr).not_to eq(%r{error}i)
 
         expect(r.exit_code).to be_zero
       end
@@ -37,7 +37,6 @@ describe 'jmeter class:', :unless => UNSUPPORTED_PLATFORMS.include?(fact('os.fam
     describe file('/usr/share/jmeter') do
       it { is_expected.to be_symlink }
     end
-
   end
 
   context 'with install plugin option' do
@@ -51,11 +50,11 @@ class { 'jmeter':
 }
       EOS
       # Apply twice to ensure no errors the second time.
-      apply_manifest(pp, :catch_failures => true) do |r|
-        expect(r.stderr).not_to match(/error/i)
+      apply_manifest(pp, catch_failures: true) do |r|
+        expect(r.stderr).not_to match(%r{error}i)
       end
-      apply_manifest(pp, :catch_failures => true) do |r|
-        expect(r.stderr).not_to eq(/error/i)
+      apply_manifest(pp, catch_failures: true) do |r|
+        expect(r.stderr).not_to eq(%r{error}i)
 
         expect(r.exit_code).to be_zero
       end
@@ -73,14 +72,13 @@ class { 'jmeter':
   end
 
   context 'jmeter::server class' do
-
     it 'sets up the service' do
       pp = <<-EOS
 class { 'jmeter':
   enable_server => true,
 }
       EOS
-      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, catch_failures: true)
     end
     describe service('jmeter') do
       it { is_expected.to be_enabled }

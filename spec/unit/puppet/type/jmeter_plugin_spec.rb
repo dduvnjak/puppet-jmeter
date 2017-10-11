@@ -1,20 +1,20 @@
 require 'spec_helper'
 describe Puppet::Type.type(:jmeter_plugin) do
-  before :each do
-    @plugin = Puppet::Type.type(:jmeter_plugin).new(:name => 'foo')
+  before do
+    @plugin = Puppet::Type.type(:jmeter_plugin).new(name: 'foo')
   end
-  it 'should accept a plugin name' do
+  it 'accepts a plugin name' do
     @plugin[:name] = 'plugin-name'
     expect(@plugin[:name]).to eq('plugin-name')
   end
-  it 'should require a name' do
-    expect {
+  it 'requires a name' do
+    expect do
       Puppet::Type.type(:jmeter_plugin).new({})
-    }.to raise_error(Puppet::Error, 'Title or name must be provided')
+    end.to raise_error(Puppet::Error, 'Title or name must be provided')
   end
-  it 'should not allow invalid names to be specified' do
-    expect {
+  it 'does not allow invalid names to be specified' do
+    expect do
       @plugin[:name] = 'this has a space'
-    }.to raise_error(Puppet::Error, /Parameter name failed on Jmeter_plugin/)
+    end.to raise_error(Puppet::Error, %r{Parameter name failed on Jmeter_plugin})
   end
 end

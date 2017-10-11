@@ -30,7 +30,7 @@ describe 'jmeter' do
           java_package   = 'java-1.7.0-openjdk'
         end
       when 'Debian'
-        if facts[:os]['name'] == 'Ubuntu' and facts[:os]['release']['full'] == '16.04'
+        if facts[:os]['name'] == 'Ubuntu' && facts[:os]['release']['full'] == '16.04'
           jmeter_version = '3.3'
           java_package   = 'openjdk-8-jre-headless'
         else
@@ -51,24 +51,25 @@ describe 'jmeter' do
         it { is_expected.not_to contain_class('jmeter::server') }
         it { is_expected.not_to contain_class('jmeter::service') }
       end
-    
+
       # This is a private class, so easiest to test directly in the class spec.
-      context "jmeter::install" do
+      context 'jmeter::install' do
         it do
           is_expected.to contain_archive("/tmp/apache-jmeter-#{jmeter_version}.tgz").with(
             'source' => "http://archive.apache.org/dist/jmeter/binaries/apache-jmeter-#{jmeter_version}.tgz"
           )
         end
         it do
-          is_expected.to contain_file('/usr/share/jmeter').with( 
-            ensure: 'link'   
+          is_expected.to contain_file('/usr/share/jmeter').with(
+            ensure: 'link'
           )
         end
 
         it { is_expected.to contain_package(java_package) }
-    
-        context "With plugin_manager_install set" do
+
+        context 'With plugin_manager_install set' do
           let(:params) { { plugin_manager_install: true } }
+
           it do
             is_expected.to contain_archive("/usr/share/jmeter/lib/ext/jmeter-plugins-manager-#{@plugin_manager_version}.jar").with(
               'source' => "http://search.maven.org/remotecontent?filepath=kg/apc/jmeter-plugins-manager/#{@plugin_manager_version}/jmeter-plugins-manager-#{@plugin_manager_version}.jar",
@@ -90,36 +91,37 @@ describe 'jmeter' do
             )
           end
         end
-    
-        context "With plugins ensured" do
+
+        context 'With plugins ensured' do
           let(:params) do
             {
               plugins: {
-                'foo'    => {'ensure' => 'present'},
-                'woozle' => {'ensure' => 'absent'}
+                'foo'    => { 'ensure' => 'present' },
+                'woozle' => { 'ensure' => 'absent' }
               }
             }
           end
+
           it do
             is_expected.to contain_jmeter_plugin('foo').with(
-              'ensure' => 'present',
+              'ensure' => 'present'
             )
           end
           it do
             is_expected.to contain_jmeter_plugin('woozle').with(
-              'ensure' => 'absent',
+              'ensure' => 'absent'
             )
           end
         end
-    
+
         context 'With server enabled' do
           let(:params) { { enable_server: true } }
-    
+
           it { is_expected.to contain_class('jmeter::server') }
           it { is_expected.to contain_class('jmeter::service') }
           it do
             is_expected.to contain_service('jmeter').with(
-              { 'ensure' => 'running', 'enable' => 'true' }
+              'ensure' => 'running', 'enable' => 'true'
             )
           end
         end
@@ -177,8 +179,7 @@ describe 'jmeter' do
             end
           end
         end
-
       end
     end
-	end
+  end
 end

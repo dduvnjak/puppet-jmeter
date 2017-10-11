@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:jmeter_plugin) do
-  @doc = "Manage jmeter plugins."
+  @doc = 'Manage jmeter plugins.'
 
   ensurable do
     desc 'Ensure that a plugin is installed or absent. Hope to support specifying version in the future'
@@ -12,9 +12,8 @@ Puppet::Type.newtype(:jmeter_plugin) do
     end
   end
 
-  newparam(:name, :namevar => true) do
-    desc "Name of the plugin."
-    newvalues(/^\S+$/)
+  newparam(:name, namevar: true) do
+    desc 'Name of the plugin.'
+    newvalues(%r{^\S+$})
   end
-
 end

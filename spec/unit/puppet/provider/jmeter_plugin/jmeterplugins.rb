@@ -8,14 +8,14 @@ end
 provider_class = Puppet::Type.type(:jmeter_plugin).provider(:jmeterplugins)
 
 describe provider_class do
-  before :each do
+  before do
     @resource = Puppet::Type::Jmeter_plugin.new(
-      {:name => 'foo'}
+      name: 'foo'
     )
     @provider = provider_class.new(@resource)
   end
 
-  it 'should return instances' do
+  it 'returns instances' do
     provider_class.expects(:jmeterplugins).with('status').returns <<-EOT
 INFO    2017-10-11 20:07:17.864 [org.jmet] (): Command is: status
 WARN    2017-10-11 20:07:17.963 [org.jmet] (): Found JAR conflict: /usr/share/apache-jmeter-2.9/lib/commons-jexl-2.1.1.jar and /usr/share/apache-jmeter-2.9/lib/commons-jexl-1.1.jar
@@ -39,13 +39,12 @@ EOT
     end.to raise_error(Puppet::Error, %r{Cannot get plugin status})
   end
 
-  it 'should call jmeterplugins to create' do
+  it 'calls jmeterplugins to create' do
     @provider.expects(:jmeterplugins).with('install', 'foo')
     @provider.create
   end
-  it 'should call jmeterplugins to destroy' do
+  it 'calls jmeterplugins to destroy' do
     @provider.expects(:jmeterplugins).with('uninstall', 'foo')
     @provider.destroy
   end
-
 end
