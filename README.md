@@ -4,9 +4,9 @@
 [![Puppet Forge](https://img.shields.io/puppetforge/v/dduvnjak/jmeter.svg)](https://forge.puppet.com/dduvnjak/jmeter)
 [![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/dduvnjak/jmeter.svg)](https://forge.puppetlabs.com/dduvnjak/jmeter)
 
-This class installs the latest version of JMeter (currently v3.2) from apache.org. If you use the `::server` class, an init script will be installed, the service enabled, and JMeter will be started in server mode listening on the default port.
+This class installs the latest version of JMeter (currently v3.2) from apache.org. If you set the `enable_server` parameter, an init script will be installed, the service enabled, and JMeter will be started in server mode listening on the default port.
 
-Both the `jmeter` and `jmeter::server` can optionally install the plugin manager, which allows you to install additional plugins.
+`jmeter` can optionally install the plugin manager, which allows you to install additional plugins.
 
 The init script is based on the one available at https://gist.github.com/2830209.
 
