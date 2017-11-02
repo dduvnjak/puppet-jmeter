@@ -3,10 +3,10 @@
 # @summary This class contains OS-specific parameters for jmeter
 class jmeter::params {
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian' : {
       $init_template = 'jmeter/jmeter-init.erb'
-      if $::operatingsystem == 'Ubuntu' and $::operatingsystemrelease == '16.04' {
+      if $facts['os']['name'] == 'Ubuntu' and $facts['os']['release']['full'] == '16.04' {
         $java_version = '8'
         $service_provider = systemd
       } else {
@@ -17,7 +17,7 @@ class jmeter::params {
     }
     'RedHat' : {
 
-      if versioncmp($::operatingsystemmajrelease, '7') >= 0  {
+      if versioncmp($facts['os']['release']['major'], '7') >= 0  {
         # TODO: add systemd stuff here
         $service_provider = systemd
         $init_template = 'jmeter/jmeter-init.redhat.erb'
@@ -32,7 +32,7 @@ class jmeter::params {
 
     }
     default: {
-      fail("Module ${module_name} is not supported on ${::operatingsystem}")
+      fail("Module ${module_name} is not supported on ${facts['os']['name']}")
     }
   }
 }

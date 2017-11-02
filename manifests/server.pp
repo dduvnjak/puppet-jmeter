@@ -1,14 +1,15 @@
+# @api private
 # jmeter::server
 #
-# @summary This class configures the server component of JMeter. Private class.
+# @summary This class configures the server component of JMeter.
 #
 class jmeter::server {
 
   assert_private()
 
-  $bind_ip = $::jmeter::bind_ip
+  $bind_ip = $jmeter::bind_ip
 
-  $init_template = $::jmeter::params::init_template
+  $init_template = $jmeter::params::init_template
 
   file { '/etc/init.d/jmeter':
     content => template($init_template),

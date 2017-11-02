@@ -12,6 +12,12 @@ The init script is based on the one available at https://gist.github.com/2830209
 
 Note: If you are using 3.x (the default version), you will need to have at least Java 8 installed.
 
+Requirements
+------------
+
+This module requires Puppet 4.7.1 or higher, as well as the stdlib and
+puppet-archive modules.
+
 Basic usage
 -----------
 
@@ -48,5 +54,4 @@ Install a plugin (if not using the `jmeter::plugins` example above):
     jmeter_plugin { 'foo':
       ensure => present,
     }
-
 
