@@ -40,7 +40,7 @@
 # @param plugin_manager_url Download URL for both the plugin manager and command runner. Note, this redirects, and part of the path has the
 #  package name appended and is built dynamically in jmeter::install.
 # @param plugin_manager_version Sets the version of the plugin manager to install.
-# @param plugins [Optional[Hash]] An optional hash of plugins to install via the plugin manager.
+# @param plugins An optional hash of plugins to install via the plugin manager.
 class jmeter (
   Boolean $enable_server              = false,
   Stdlib::Compat::Ip_address $bind_ip = '0.0.0.0',
