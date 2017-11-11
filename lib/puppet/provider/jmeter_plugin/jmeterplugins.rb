@@ -6,36 +6,27 @@ DESC
 
   has_command(:jmeterplugins, '/usr/share/jmeter/bin/PluginsManagerCMD.sh')
 
-  def self.get_plugins
+  def self.plugins
+    plugins = {}
 
-    plugins = Hash.new
-
-    jmeterplugins('status').split(/\n/).map do |line|
-
-      if line =~ /\[.*\]/
-        line = line.strip()
-        line = line.tr('[]', '')
-        chunks = line.split(', ')
-        chunks.each do |chunk|
-          name, version = chunk.split('=')
-          plugins[name] = version
-        end
-      elsif line =~ /^ERROR StatusLogger/
-        # Harmless
-        next
-      else
-        raise Puppet::Error, "Cannot parse invalid plugins line: #{line}"
-      end
+    lines = jmeterplugins('status').split(%r{\n})
+    raise Puppet::Error, 'Cannot get plugin status' unless lines.last =~ %r{\[.*\]}
+    line = lines.last.strip
+    line = line.tr('[]', '')
+    chunks = line.split(', ')
+    chunks.each do |chunk|
+      name, version = chunk.split('=')
+      plugins[name] = version
     end
     plugins
   end
 
   def self.instances
-    resources = Array.new
-    get_plugins.collect do |name, versions|
+    resources = []
+    plugins.map do |name, _versions|
       plugin = {
-        :ensure => :present,
-        :name   => name,
+        ensure: :present,
+        name: name
       }
       resources << new(plugin) if plugin[:name]
     end
@@ -45,7 +36,7 @@ DESC
   def self.prefetch(resources)
     plugins = instances
     resources.keys.each do |name|
-      if provider = plugins.find{ |plugin| plugin.name == name }
+      if (provider = plugins.find { |plugin| plugin.name == name })
         resources[name].provider = provider
       end
     end
@@ -66,5 +57,4 @@ DESC
   end
 
   # may need to flush also
-
 end

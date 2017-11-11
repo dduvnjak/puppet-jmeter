@@ -16,15 +16,13 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Apache JMeter Remote Server"
 NAME=jmeter
+JMETER_USER=<%= @jmeter_user %>
 JMETER_PATH=/usr/share/jmeter
-# RMI_HOST_DEF is used inside the $JMETER_PATH/bin/$NAME-server script
-# Change this to your IP
-export RMI_HOST_DEF="-Djava.rmi.server.hostname=<%= @bind_ip %>"
-SERVER_PORT=1099
-SERVER_CMD="$JMETER_PATH/bin/$NAME-server"
+SERVER_ARGS="-s -Djava.rmi.server.hostname=<%= @bind_ip %> -Dserver_port=<%= @bind_port %> -j /var/log/jmeter/jmeter-server.log"
+SERVER_CMD="${JMETER_PATH}/bin/${NAME}.sh"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-JAVA_PID=$(pgrep -f "[A]pacheJMeter.jar $RMI_HOST_DEF -Dserver_port=1099")
+JAVA_PID=$(pgrep -f "[A]pacheJMeter.jar ${SERVER_ARGS}")
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -42,7 +40,7 @@ JAVA_PID=$(pgrep -f "[A]pacheJMeter.jar $RMI_HOST_DEF -Dserver_port=1099")
 #
 update_pid()
 {
-    JAVA_PID=$(pgrep -f "[A]pacheJMeter.jar $RMI_HOST_DEF -Dserver_port=1099")
+    JAVA_PID=$(pgrep -f "[A]pacheJMeter.jar ${SERVER_ARGS}")
 }
 
 #
@@ -52,7 +50,7 @@ do_start()
 {
         [ -n "$JAVA_PID" ] && echo "$NAME already started" && exit 0
         echo -n "Starting $NAME: "
-        $JMETER_PATH/bin/$NAME-server 2>&1 &
+        runuser $JMETER_USER $SERVER_CMD -- $SERVER_ARGS 2>&1 &
         RETVAL=$?
         MODE="normal"
         echo "$NAME started in $MODE mode"
