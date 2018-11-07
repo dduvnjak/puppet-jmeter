@@ -45,4 +45,5 @@ group :system_tests do
   gem 'master_manipulator',                                                      :require => false
   gem 'beaker-hostgenerator', *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'])
   gem 'beaker-abs', *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')        
+  gem 'beaker-docker'
 end
