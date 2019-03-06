@@ -3,6 +3,7 @@ Description=Jmeter Server Service
 
 [Service]
 User=<%= @jmeter_user %>
+WorkingDirectory=/usr/share/jmeter/bin
 ExecStart=/usr/share/jmeter/bin/jmeter.sh -s -Djava.rmi.server.hostname=<%= @bind_ip %> -Dserver_port=<%= @bind_port %> -j /var/log/jmeter/jmeter-server.log
 Type=simple
 
